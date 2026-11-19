@@ -11,127 +11,152 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <style>
-    /* Masthead: the front page gets the big version */
-    .masthead--front .masthead__logo span { font-size: clamp(56px, 8vw, 104px); }
-    .masthead--front .masthead__title .display { font-size: clamp(30px, 4vw, 52px); }
-
-    /* Lead */
-    .lead { display: flex; flex-wrap: wrap; gap: 32px; padding: 32px 0; border-bottom: var(--rule-section); }
-    .lead__main { flex: 3 1 520px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-    .lead__kicker { align-self: flex-start; background: var(--ink); color: var(--paper); padding: 4px 8px; }
-    .lead__headline { font-size: clamp(48px, 7.4vw, 108px); }
-    .lead__headline em { font-style: normal; color: var(--red-text); }
-    .lead__dek { margin: 0; font-family: var(--font-body); font-size: clamp(18px, 1.6vw, 21px); line-height: 1.45; max-width: 760px; }
-    .lead .btn { align-self: flex-start; }
-    .inside { flex: 1 1 280px; display: flex; flex-direction: column; border: var(--rule-box); align-self: flex-start; }
-    .inside__head { background: var(--ink); color: var(--paper); padding: 8px 12px; }
-    .inside a { display: flex; flex-direction: column; gap: 4px; padding: 12px; border-bottom: var(--rule-hair); }
-    .inside a:last-child { border-bottom: 0; }
-    .inside__title { font-family: var(--font-body); font-size: 18px; line-height: 1.25; font-weight: 600; }
-
-    /* Index grid */
-    .index { padding: 28px 0 8px; }
-    .index__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; padding-bottom: 14px; }
-    .index__head h2 { font-size: clamp(42px, 4.6vw, 60px); }
-    .index__note { margin: 6px 0 0; font-family: var(--font-body); font-size: 17px; color: var(--muted); }
-    .group { padding: 10px 0 16px; }
-    .group__head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-top: var(--rule-box); padding-top: 8px; margin-bottom: 8px; }
-    .group__head .display { font-size: 26px; line-height: 1; }
-    .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 6px; }
-    .tile {
-      display: flex; flex-direction: column; gap: 6px; padding: 9px 10px; min-height: 112px;
-      border: var(--rule-tile); background: var(--t1); color: var(--ink); text-align: left;
-      transition: transform .12s ease, box-shadow .12s ease;
+    /* The spread: three sections side by side, filling one screen on desktop. */
+    .spread {
+      display: grid; grid-template-columns: 300px minmax(0, 1fr) 340px;
+      margin-top: 12px; border: var(--rule); background: var(--card);
+      height: clamp(640px, calc(100vh - 120px), 880px);
     }
-    .tile--2 { background: var(--t2); }
-    .tile--3 { background: var(--t3); }
-    .tile--4 { background: var(--red); color: var(--on-red); }
-    .tile[aria-pressed="true"] { box-shadow: 6px 6px 0 var(--ink); transform: translate(-3px, -3px); }
-    .tile:hover { box-shadow: 3px 3px 0 var(--ink); }
-    .tile[aria-pressed="true"]:hover { box-shadow: 6px 6px 0 var(--ink); }
-    .tile__top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .tile__num { font-size: 40px; }
-    .tile__n { font-weight: 800; font-size: 15px; }
-    .tile__name { font-weight: 700; font-size: 13.5px; line-height: 1.2; min-height: 34px; }
-    .bar { display: flex; height: 5px; gap: 2px; }
-    .bar span { min-width: 0; }
-    .bar .i { background: var(--bar-i); } .bar .c { background: var(--ink); } .bar .a { background: var(--red); }
-    .tile--4 .bar .i { background: rgba(255,255,255,.5); } .tile--4 .bar .c { background: #FFFFFF; } .tile--4 .bar .a { background: #111111; }
-    .legend { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; padding: 6px 0 18px; font-size: 13px; color: var(--muted); }
-    .legend i { display: inline-block; width: 20px; height: 12px; border: 1px solid var(--ink); vertical-align: -1px; margin-right: 4px; }
+    .spread > section, .spread > aside { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+    .spread > section + section, .spread > aside { border-left: var(--rule); }
+    .scroll { flex: 1; min-height: 0; overflow: auto; }
+    .sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: var(--rule); }
+    .sec-head h2 { font-size: 22px; }
+    @media (max-width: 1100px) {
+      .spread { grid-template-columns: 1fr; height: auto; }
+      .spread > section + section, .spread > aside { border-left: 0; border-top: var(--rule); }
+      .scroll { overflow: visible; }
+    }
 
-    /* Story for the selected tile */
-    .story { display: flex; flex-wrap: wrap; gap: 32px; padding: 24px 0 8px; border-top: var(--rule-section); scroll-margin-top: 16px; }
-    .story__main { flex: 2 1 480px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-    .story__main h2 { font-size: clamp(44px, 5vw, 64px); }
-    .story__blurb { margin: 0; font-family: var(--font-body); font-size: 21px; line-height: 1.45; }
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-    .chips span { border: var(--rule-tile); padding: 6px 10px; }
+    /* 1 · Start here */
+    .lead { padding: 18px 16px; display: flex; flex-direction: column; gap: 10px; border-bottom: var(--rule); }
+    .lead h1 { font-size: 34px; }
+    .lead h1 em { font-style: normal; color: var(--acc-text); }
+    .lead p { margin: 0; font-size: 15px; line-height: 1.55; }
+    .lead .btn { align-self: flex-start; }
+    .inside a { display: flex; flex-direction: column; gap: 3px; padding: 10px 16px; border-top: var(--rule-hair); }
+    .inside a:first-of-type { border-top: 0; }
+    .inside__title { font-size: 15px; line-height: 1.35; font-weight: 600; }
+
+    /* 2 · Every topic: the table */
+    .table { padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 16px 12px; align-content: flex-start; }
+    .field-col { display: flex; flex-direction: column; gap: 6px; }
+    .field-col__head { padding-top: 5px; border-top: 6px solid var(--band); }
+    .field-col__head .label { display: block; line-height: 1.3; }
+    .tiles { display: grid; gap: 6px; }
+    .tile {
+      display: flex; flex-direction: column; justify-content: space-between; gap: 3px;
+      width: 84px; height: 82px; padding: 9px 7px 6px; border: var(--rule); background: var(--t1); color: var(--ink);
+      text-align: left; box-shadow: inset 0 5px 0 var(--band); transition: transform .12s, box-shadow .12s;
+    }
+    .tile--2 { background: var(--t2); } .tile--3 { background: var(--t3); }
+    .tile--4 { background: var(--hi); color: var(--on-hi); }
+    .tile:hover, .tile:focus-visible { transform: translateY(-2px); box-shadow: inset 0 5px 0 var(--band), 3px 3px 0 var(--ink); }
+    .tile[aria-pressed="true"] { transform: translateY(-2px); box-shadow: inset 0 5px 0 var(--band), 4px 4px 0 var(--acc); }
+    .tile__top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .tile .sym { font-size: 26px; line-height: .9; }
+    .tile__n { font-family: var(--font-mono); font-size: 11px; }
+    .tile__name { font-size: 10.5px; font-weight: 600; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .bar { display: flex; height: 4px; gap: 2px; }
+    .bar .i { background: var(--bar-i); } .bar .c { background: var(--ink); } .bar .a { background: var(--acc); }
+
+    /* 2 · Every topic: the map */
+    .map { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .map svg { width: 100%; height: auto; max-height: 100%; border: var(--rule); background: var(--paper); }
+    .map .edge { stroke: var(--ink); opacity: .14; transition: opacity .15s; }
+    .map .edge.lit { stroke: var(--acc); opacity: .9; }
+    .map .node { cursor: pointer; transition: opacity .15s; }
+    .map .node.dim { opacity: .3; }
+    .map .node rect.box { stroke: var(--ink); stroke-width: 1.5; }
+    .map .node.focus rect.box { stroke-width: 3; }
+    .map .node.pinned rect.ring { stroke: var(--hi); stroke-width: 4; fill: none; }
+    .map .node text.sym-t { font-family: var(--font-display); font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+    .map .node text.lab { font-family: var(--font-ui); font-size: 11px; font-weight: 600; text-anchor: middle; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; }
+    .map .node:focus { outline: none; }
+    .map .node:focus-visible rect.box { stroke: var(--acc); stroke-width: 3; }
+    .map__note { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 9px 16px; border-top: var(--rule); font-size: 12px; font-weight: 600; }
+    .legend i { display: inline-block; width: 12px; height: 12px; border: 1px solid var(--ink); vertical-align: -1px; margin-right: 5px; }
+    .legend .label { margin-left: auto; }
+
+    /* 3 · Topic details */
+    .panel-head { display: flex; gap: 12px; padding: 14px; border-bottom: var(--rule); }
+    .block { min-width: 84px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; background: var(--acc); color: var(--on-acc); box-shadow: inset 0 6px 0 var(--band); }
+    .block--hi { background: var(--hi); color: var(--on-hi); }
+    .block .sym { font-size: 42px; line-height: .9; }
+    .panel-head h2 { font-size: 21px; }
+    .panel-body { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+    .panel-body > p { margin: 0; font-size: 15px; line-height: 1.55; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chips span { font-family: var(--font-mono); font-size: 11.5px; padding: 2px 8px; border: var(--rule); }
     .chips span.solid { background: var(--ink); color: var(--paper); }
-    .readfirst { flex: 1 1 300px; display: flex; flex-direction: column; border: var(--rule-box); align-self: flex-start; }
-    .readfirst__head { background: var(--ink); color: var(--paper); padding: 8px 12px; }
-    .readfirst a.item { display: flex; flex-direction: column; gap: 4px; padding: 12px; border-bottom: var(--rule-hair); }
-    .readfirst a.item span:last-child { font-family: var(--font-body); font-size: 18px; font-weight: 600; line-height: 1.25; }
-    .readfirst a.all { padding: 12px; font-weight: 800; color: var(--red-text); letter-spacing: .04em; }
+    .list { display: flex; flex-direction: column; }
+    .list > .label { padding-bottom: 5px; }
+    .list a, .list button { display: flex; gap: 8px; align-items: baseline; padding: 7px 0; border: 0; border-top: var(--rule-hair); background: transparent; text-align: left; }
+    .list a { font-size: 14.5px; font-weight: 600; line-height: 1.35; flex-direction: column; gap: 2px; }
+    .list button .sym { font-size: 14px; min-width: 24px; }
+    .list button small { display: block; font-size: 12.5px; color: var(--muted); font-style: italic; }
+    .panel-foot { padding: 12px 14px; border-top: var(--rule); }
+    .panel-foot .btn { width: 100%; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header class="masthead masthead--front">
-      <a class="masthead__logo" href="index.html" aria-label="3C home"><span class="display">3C</span></a>
+    <header class="masthead">
+      <a class="masthead__logo" href="index.html" aria-label="3C home"><span class="sym">3C</span></a>
       <div class="masthead__title">
-        <h1 class="display">The 3C Repository</h1>
+        <span class="display">The 3C Repository</span>
         <span class="label muted" id="stamp">Loading…</span>
       </div>
       <nav class="masthead__nav" aria-label="Primary">
-        <a href="#lead">Start here</a>
-        <a href="#index">Topics</a>
+        <a href="index.html" aria-current="page">Front page</a>
         <a href="library.html">Library</a>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch colour theme">Dark</button>
       </nav>
     </header>
 
-    <main id="main">
-      <section class="lead" id="lead" aria-labelledby="lead-h">
-        <div class="lead__main">
-          <span class="label lead__kicker" id="lead-kicker">Start here</span>
-          <h2 class="display lead__headline" id="lead-h">…</h2>
-          <p class="lead__dek" id="lead-dek"></p>
+    <main class="spread" id="main">
+      <!-- 1 · Start here -->
+      <section aria-labelledby="lead-h">
+        <div class="lead">
+          <span class="label accent" id="lead-kicker">Start here</span>
+          <h1 class="display" id="lead-h">…</h1>
+          <p id="lead-dek"></p>
           <a class="btn" id="lead-cta" href="#" target="_blank" rel="noopener noreferrer">Open the guide →</a>
         </div>
-        <aside class="inside" aria-labelledby="inside-h">
-          <span class="label inside__head" id="inside-h">Also inside</span>
+        <div class="scroll inside" aria-labelledby="inside-h">
+          <span class="label muted" id="inside-h" style="display:block; padding: 12px 16px 4px;">Also inside</span>
           <div id="inside"></div>
-        </aside>
+        </div>
       </section>
 
-      <section class="index" id="index" aria-labelledby="index-h">
-        <div class="index__head">
-          <div>
-            <h2 class="display" id="index-h">Every topic, one grid</h2>
-            <p class="index__note" id="view-note"></p>
+      <!-- 2 · Every topic -->
+      <section aria-labelledby="idx-h">
+        <div class="sec-head">
+          <h2 class="display" id="idx-h">Every topic</h2>
+          <div class="seg" role="group" aria-label="Show topics as">
+            <button type="button" id="mode-table" aria-pressed="true">Table</button>
+            <button type="button" id="mode-map" aria-pressed="false">Map</button>
           </div>
-          <div class="seg" role="group" aria-label="View the grid by" id="view-chips"></div>
         </div>
-        <div id="groups"><p class="muted">Loading the index…</p></div>
-        <div class="legend" aria-hidden="true">
-          <span><i style="background: var(--t1)"></i>under 8</span>
-          <span><i style="background: var(--t2)"></i>8–12</span>
-          <span><i style="background: var(--t3)"></i>13–21</span>
-          <span><i style="background: var(--red)"></i>22+ entries</span>
-          <span>Bar: intro / core / advanced</span>
+        <div class="scroll">
+          <div class="table" id="table"><p class="muted">Loading the topics…</p></div>
+          <div class="map" id="map" hidden></div>
         </div>
+        <div class="legend" id="legend" aria-label="Fields"></div>
       </section>
 
-      <article class="story" id="story" aria-live="polite"></article>
+      <!-- 3 · Topic details -->
+      <aside id="panel" aria-live="polite" aria-label="Topic details"></aside>
     </main>
 
     <footer class="site-footer">
-      Entries live in a shared Google Doc and sync here automatically. Subjects and levels are tagged in categories.json; the cover story and picks are chosen by hand.
+      Entries live in a shared Google Doc and sync here automatically. Topics, levels and links between topics are kept in categories.json and connections.json; the cover story and picks are chosen by hand.
     </footer>
   </div>
 

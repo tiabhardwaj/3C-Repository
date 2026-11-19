@@ -31,6 +31,17 @@ for (const [url, t] of Object.entries(categories.entries)) {
 const stale = Object.keys(categories.entries).filter(u => !byUrl.has(u));
 const untagged = entries.filter(e => !e.reviewed);
 
+// Symbols: every topic needs a unique two-letter, element-style symbol
+const syms = Object.entries(categories.topics).map(([code, t]) => [code, t.symbol]);
+for (const [code, s] of syms) if (!/^[A-Z][a-z]$/.test(s || '')) problems.push(`topic ${code} has no valid symbol (got "${s}")`);
+for (const [code, s] of syms) if (syms.filter(([, x]) => x === s).length > 1) problems.push(`symbol "${s}" is used more than once (${code})`);
+
+// Map links: every topic named in connections.json must exist and have a position
+const conn = read('connections.json');
+for (const code of Object.keys(conn.positions)) if (!categories.topics[code]) problems.push(`connections.json position for unknown topic ${code}`);
+for (const code of Object.keys(categories.topics)) if (!conn.positions[code]) problems.push(`connections.json has no map position for ${code}`);
+for (const l of conn.links) for (const t of [l.a, l.b]) if (!categories.topics[t]) problems.push(`connections.json link uses unknown topic ${t}`);
+
 // Views
 const viewKeys = Object.keys(categories.views).filter(k => k !== 'default');
 if (!categories.views[categories.views.default]) problems.push(`default view "${categories.views.default}" does not exist`);

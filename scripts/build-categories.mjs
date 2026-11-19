@@ -10,33 +10,34 @@ const root = new URL('../', import.meta.url);
 const data = JSON.parse(readFileSync(new URL('data.json', root), 'utf8'));
 const lines = readFileSync(process.argv[2], 'utf8').trim().split(/\r?\n/);
 
+// `symbol` is the two-letter, periodic-table-style mnemonic shown on each tile.
 const topics = {
-  QC:    { name: 'Quantum chemistry & DFT', blurb: 'Hartree-Fock, density functionals, basis sets, spectroscopy.' },
-  MD:    { name: 'Molecular dynamics & force fields', blurb: 'Simulating atoms in motion: GROMACS, OpenMM, integrators, water models.' },
-  SM:    { name: 'Statistical mechanics & complex systems', blurb: 'Ensembles, entropy, phase transitions, percolation.' },
-  MLM:   { name: 'ML for molecules & materials', blurb: 'Interatomic potentials, generative materials, cheminformatics, datasets.' },
-  MAT:   { name: 'Materials science', blurb: 'Alloys, crystals, polymers, stability of solids.' },
-  CHE:   { name: 'Chemical engineering & applied chemistry', blurb: 'Process design, combustion, analytical chemistry, lithography.' },
-  PRO:   { name: 'Protein structure & design', blurb: 'AlphaFold, ESM, de novo design, structural biology.' },
-  DRUG:  { name: 'Drug discovery & medicine', blurb: 'Binding affinity, docking, organoids, vaccines.' },
-  BIO:   { name: 'Cells & biophysics', blurb: 'Gene circuits, stochastic simulation, how cells compute.' },
-  NEURO: { name: 'Neuroscience & the brain', blurb: 'Neural circuits, predictive coding, optogenetics.' },
-  NUM:   { name: 'Numerical methods', blurb: 'Linear algebra, Fourier, Monte Carlo, scientific computing courses.' },
-  PDE:   { name: 'Fluids & differential equations', blurb: 'CFD, spectral methods, physics-informed networks.' },
-  DLT:   { name: 'Deep learning theory & optimization', blurb: 'Generalization, SGD, mean-field and statistical-physics views of learning.' },
-  MLF:   { name: 'Machine learning foundations & models', blurb: 'Transformers, diffusion, GNN primers, uncertainty, textbooks.' },
-  MATH:  { name: 'Mathematics', blurb: 'Proofs, number theory, geometry, AI and mathematics.' },
-  CS:    { name: 'Computing & hardware', blurb: 'Architecture, chips, shells, and the history of the machines.' },
-  QM:    { name: 'Quantum mechanics & atomic physics', blurb: 'Wavefunctions, hydrogen, spin, Zeeman, time-dependent QM.' },
-  QCOMP: { name: 'Quantum computing', blurb: 'Rydberg atoms, Qiskit, Hamiltonian simulation.' },
-  CMP:   { name: 'Condensed matter physics', blurb: 'Magnetism, linear response, topology in solids.' },
-  COSMO: { name: 'Particles, nuclei & the cosmos', blurb: 'Black holes, dark matter, quarks, superheavy elements.' },
-  OPT:   { name: 'Optics & lasers', blurb: 'Laser cooling, telescopes, lenses, Ti:sapphire.' },
-  HIST:  { name: 'History & people of science', blurb: 'Primary sources, biographies, Los Alamos.' },
-  RES:   { name: 'How research works', blurb: 'Reading lists, research craft, measuring progress.' },
-  AI:    { name: 'AI, mind & the future', blurb: 'Intelligence, consciousness, AI policy and safety.' },
-  IND:   { name: 'Engineering, industry & energy', blurb: 'Supply chains, factories, robots, propulsion.' },
-  MISC:  { name: 'Curiosities', blurb: 'Hard to file, worth keeping.' },
+  QC:    { symbol: 'Qc', name: 'Quantum chemistry & DFT', blurb: 'Hartree-Fock, density functionals, basis sets, spectroscopy.' },
+  MD:    { symbol: 'Md', name: 'Molecular dynamics & force fields', blurb: 'Simulating atoms in motion: GROMACS, OpenMM, integrators, water models.' },
+  SM:    { symbol: 'Sm', name: 'Statistical mechanics & complex systems', blurb: 'Ensembles, entropy, phase transitions, percolation.' },
+  MLM:   { symbol: 'Ml', name: 'ML for molecules & materials', blurb: 'Interatomic potentials, generative materials, cheminformatics, datasets.' },
+  MAT:   { symbol: 'Ma', name: 'Materials science', blurb: 'Alloys, crystals, polymers, stability of solids.' },
+  CHE:   { symbol: 'Ce', name: 'Chemical engineering & applied chemistry', blurb: 'Process design, combustion, analytical chemistry, lithography.' },
+  PRO:   { symbol: 'Pr', name: 'Protein structure & design', blurb: 'AlphaFold, ESM, de novo design, structural biology.' },
+  DRUG:  { symbol: 'Dr', name: 'Drug discovery & medicine', blurb: 'Binding affinity, docking, organoids, vaccines.' },
+  BIO:   { symbol: 'Cb', name: 'Cells & biophysics', blurb: 'Gene circuits, stochastic simulation, how cells compute.' },
+  NEURO: { symbol: 'Ns', name: 'Neuroscience & the brain', blurb: 'Neural circuits, predictive coding, optogenetics.' },
+  NUM:   { symbol: 'Nm', name: 'Numerical methods', blurb: 'Linear algebra, Fourier, Monte Carlo, scientific computing courses.' },
+  PDE:   { symbol: 'Fl', name: 'Fluids & differential equations', blurb: 'CFD, spectral methods, physics-informed networks.' },
+  DLT:   { symbol: 'Lt', name: 'Deep learning theory & optimization', blurb: 'Generalization, SGD, mean-field and statistical-physics views of learning.' },
+  MLF:   { symbol: 'Mf', name: 'Machine learning foundations & models', blurb: 'Transformers, diffusion, GNN primers, uncertainty, textbooks.' },
+  MATH:  { symbol: 'Mt', name: 'Mathematics', blurb: 'Proofs, number theory, geometry, AI and mathematics.' },
+  CS:    { symbol: 'Cp', name: 'Computing & hardware', blurb: 'Architecture, chips, shells, and the history of the machines.' },
+  QM:    { symbol: 'Qm', name: 'Quantum mechanics & atomic physics', blurb: 'Wavefunctions, hydrogen, spin, Zeeman, time-dependent QM.' },
+  QCOMP: { symbol: 'Qu', name: 'Quantum computing', blurb: 'Rydberg atoms, Qiskit, Hamiltonian simulation.' },
+  CMP:   { symbol: 'Cm', name: 'Condensed matter physics', blurb: 'Magnetism, linear response, topology in solids.' },
+  COSMO: { symbol: 'Co', name: 'Particles, nuclei & the cosmos', blurb: 'Black holes, dark matter, quarks, superheavy elements.' },
+  OPT:   { symbol: 'Op', name: 'Optics & lasers', blurb: 'Laser cooling, telescopes, lenses, Ti:sapphire.' },
+  HIST:  { symbol: 'Hi', name: 'History & people of science', blurb: 'Primary sources, biographies, Los Alamos.' },
+  RES:   { symbol: 'Rs', name: 'How research works', blurb: 'Reading lists, research craft, measuring progress.' },
+  AI:    { symbol: 'Ai', name: 'AI, mind & the future', blurb: 'Intelligence, consciousness, AI policy and safety.' },
+  IND:   { symbol: 'In', name: 'Engineering, industry & energy', blurb: 'Supply chains, factories, robots, propulsion.' },
+  MISC:  { symbol: 'Cu', name: 'Curiosities', blurb: 'Hard to file, worth keeping.' },
 };
 const levels = {
   I: { name: 'Intro', blurb: 'No background needed: explainers, popular talks, essays, first tutorials.' },
@@ -44,10 +45,10 @@ const levels = {
   A: { name: 'Advanced', blurb: 'Research level: papers, preprints, specialist code and graduate seminars.' },
 };
 
-// Ways to group the topics. Readers switch between these on the site;
-// `default` is the one it opens on. A view is only a regrouping of topic
-// codes, so adding or changing one never requires re-tagging entries.
-// Every topic must appear in exactly one group of every view.
+// How topics are grouped on the site. Only "fields" is used (Rings and Roles
+// were dropped on 19 Nov 2026). A view is just a regrouping of topic codes,
+// so changing it never requires re-tagging entries. Every topic must appear
+// in exactly one group.
 const views = {
   default: 'fields',
   fields: {
@@ -63,29 +64,11 @@ const views = {
       { id: 'science-society', name: 'Science & Society', desc: 'The people, history and big questions around the science.', topics: ['HIST', 'AI', 'RES', 'IND', 'MISC'] },
     ],
   },
-  rings: {
-    name: 'Rings around the core',
-    desc: 'Computational chemistry sits at the centre; everything else is arranged by how close it is to that core.',
-    bestFor: 'First-time visitors who want to know what 3C is about.',
-    groups: [
-      { id: 'core', name: 'The core: computational chemistry & materials', desc: 'What 3C exists for: quantum chemistry, simulation and materials.', topics: ['QC', 'MD', 'MLM', 'MAT', 'CHE', 'SM'] },
-      { id: 'methods', name: 'The methods it borrows', desc: 'Maths, numerics and machine learning that the core runs on.', topics: ['MATH', 'NUM', 'PDE', 'DLT', 'MLF', 'CS'] },
-      { id: 'neighbours', name: 'Neighbouring sciences', desc: 'Physics on one side, biology and medicine on the other.', topics: ['QM', 'QCOMP', 'CMP', 'COSMO', 'OPT', 'PRO', 'DRUG', 'BIO', 'NEURO'] },
-      { id: 'wider', name: 'The wider view', desc: 'History, research culture and where it is all heading.', topics: ['HIST', 'RES', 'AI', 'IND', 'MISC'] },
-    ],
-  },
-  roles: {
-    name: 'Roles',
-    desc: 'Grouped by the kind of knowledge: the theory, the tools, what they are used for, and the story around them.',
-    bestFor: 'Students working through a subject in order.',
-    groups: [
-      { id: 'foundations', name: 'Foundations', desc: 'The theory everything else stands on.', topics: ['QM', 'SM', 'MATH', 'DLT', 'CMP', 'COSMO'] },
-      { id: 'methods-tools', name: 'Methods & tools', desc: 'Techniques, codes and libraries you can run.', topics: ['QC', 'MD', 'NUM', 'PDE', 'MLF', 'MLM', 'CS'] },
-      { id: 'applications', name: 'Applications', desc: 'Where the methods meet real materials, molecules and machines.', topics: ['MAT', 'CHE', 'PRO', 'DRUG', 'BIO', 'NEURO', 'IND', 'OPT', 'QCOMP'] },
-      { id: 'context', name: 'Context', desc: 'History, research craft and the big questions.', topics: ['HIST', 'RES', 'AI', 'MISC'] },
-    ],
-  },
 };
+// Every topic needs its own symbol, like elements on a periodic table.
+const symbols = Object.values(topics).map(t => t.symbol);
+const dupeSymbols = symbols.filter((s, i) => symbols.indexOf(s) !== i);
+if (symbols.some(s => !/^[A-Z][a-z]$/.test(s)) || dupeSymbols.length) throw new Error(`bad or duplicate symbols: ${dupeSymbols}`);
 for (const [key, view] of Object.entries(views)) {
   if (key === 'default') continue;
   const seen = view.groups.flatMap(g => g.topics);

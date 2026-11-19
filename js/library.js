@@ -1,5 +1,5 @@
 // The library page: search and filter every entry in the doc.
-// State lives in the URL (?q=&view=&group=&topic=&level=&format=) so any
+// State lives in the URL (?q=&group=&topic=&level=&format=) so any
 // filtered view can be shared as a link.
 
 import { buildEntries, viewOf, groupEntries, search } from './model.js';
@@ -40,7 +40,6 @@ function readState() {
   const p = new URLSearchParams(location.search);
   return {
     q: p.get('q') || '',
-    view: p.get('view') || '',
     group: p.get('group') || '',
     topic: p.get('topic') || '',
     level: p.get('level') || '',
@@ -81,9 +80,9 @@ function baseMatches() {
 // ---------- Rendering ----------
 
 function render() {
-  const view = viewOf(categories, state.view);
+  const view = viewOf(categories, categories.views.default);
   const t2g = topicToGroup(view);
-  // A group or topic left over from another view (or a stale link) is ignored.
+  // A group or topic from a stale link is ignored.
   const group = view.groups.find(g => g.id === state.group) || null;
   const topicOk = state.topic && categories.topics[state.topic] && (!group || t2g[state.topic] === group.id);
   const topic = topicOk ? state.topic : '';
@@ -92,7 +91,6 @@ function render() {
   const inGroup = group ? base.filter(e => t2g[e.topic] === group.id) : base;
   const results = topic ? inGroup.filter(e => e.topic === topic) : inGroup;
 
-  renderViewChips(view);
   renderGroupChips(view, base, t2g, group);
   renderTopicSelect(view, group, inGroup, topic);
   renderLevelChips();
@@ -103,16 +101,6 @@ function render() {
   $('clear').hidden = !filtered;
 }
 
-function renderViewChips(view) {
-  const box = $('view-chips');
-  box.replaceChildren(...Object.entries(categories.views)
-    .filter(([k]) => k !== 'default')
-    .map(([k, v]) => el('button', {
-      type: 'button', 'aria-pressed': String(view.key === k), title: v.desc,
-      onclick: () => update({ view: k === categories.views.default ? '' : k, group: '', topic: '' }),
-    }, v.name.replace(' around the core', ''))));
-}
-
 function renderGroupChips(view, base, t2g, group) {
   const counts = {};
   for (const e of base) counts[t2g[e.topic]] = (counts[t2g[e.topic]] || 0) + 1;
@@ -120,7 +108,6 @@ function renderGroupChips(view, base, t2g, group) {
     type: 'button', class: 'pill', 'aria-pressed': String((group ? group.id : '') === id), title: desc || '',
     onclick: () => update({ group: id, topic: '' }),
   }, el('span', { class: 'pill__main' }, name, ' ', el('span', { class: 'count' }, String(n))));
-  $('group-label').textContent = view.name === 'Fields' ? 'Field' : view.name === 'Roles' ? 'Role' : 'Ring';
   $('group-chips').replaceChildren(
     chip('', 'Everything', base.length),
     ...view.groups.map(g => chip(g.id, g.name, counts[g.id] || 0, g.desc)),
@@ -134,7 +121,7 @@ function renderTopicSelect(view, group, inGroup, topic) {
   const sel = $('topic');
   sel.replaceChildren(
     el('option', { value: '' }, group ? `All topics in ${group.name}` : 'All 26 topics'),
-    ...codes.map(c => el('option', { value: c, selected: c === topic }, `${categories.topics[c].name} (${counts[c] || 0})`)),
+    ...codes.map(c => el('option', { value: c, selected: c === topic }, `${categories.topics[c].symbol} · ${categories.topics[c].name} (${counts[c] || 0})`)),
   );
   sel.value = topic;
 }
@@ -182,7 +169,7 @@ function resultRow(e, groupName) {
       el('h3', { class: 'result__title' }, e.url ? el('a', linkAttrs, e.title) : e.title),
       desc ? el('p', { class: 'result__desc' }, desc) : null,
       el('div', { class: 'result__where' },
-        el('a', { href: `?topic=${encodeURIComponent(e.topic)}`, onclick: ev => { ev.preventDefault(); update({ topic: e.topic, group: '' }); window.scrollTo({ top: 0, behavior: 'smooth' }); } }, topicName),
+        el('a', { href: `topic.html?t=${encodeURIComponent(e.topic)}`, title: 'Open this topic' }, `${categories.topics[e.topic] ? categories.topics[e.topic].symbol + ' · ' : ''}${topicName}`),
         groupName ? ` · ${groupName}` : '',
         e.host ? ` · ${e.host}` : ''),
       e.links && e.links.length
